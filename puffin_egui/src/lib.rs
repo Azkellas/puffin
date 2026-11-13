@@ -60,7 +60,7 @@ pub fn show_viewport_if_enabled(ui: &egui::Ui) {
                 puffin::set_scopes_on(open);
             } else {
                 // A proper viewport!
-                egui::CentralPanel::default().show_inside(ui, profiler_ui);
+                egui::CentralPanel::default().show(ui, profiler_ui);
                 if ui.input(|i| i.viewport().close_requested()) {
                     puffin::set_scopes_on(false);
                 }
@@ -749,7 +749,7 @@ impl ProfilerUi {
                     Tooltip::always_open(
                         ui.clone(),
                         ui.layer_id(),
-                        Id::new("puffin_frame_tooltip"),
+                        Id::unique("puffin_frame_tooltip"),
                         PopupAnchor::Pointer,
                     )
                     .show(|ui| {

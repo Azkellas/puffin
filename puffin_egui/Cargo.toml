@@ -29,7 +29,7 @@ log.workspace = true
 log-once.workspace = true
 natord.workspace = true
 parking_lot.workspace = true
-puffin = { version = "0.20.0", path = "../puffin", features = ["packing"] }
+puffin = { version = "0.20.0", features = ["packing"] }
 serde = { workspace = true, optional = true }
 time.workspace = true
 vec1.workspace = true

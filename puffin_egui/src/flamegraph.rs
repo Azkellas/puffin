@@ -218,7 +218,7 @@ pub fn ui(
 
     {
         // reset view if number of selected frames changes (and we are viewing all of them):
-        let num_frames_id = ui.id().with("num_frames");
+        let num_frames_id = ui.scope_id().with("num_frames");
         let num_frames_last_frame =
             ui.memory_mut(|m| m.data.get_temp::<usize>(num_frames_id).unwrap_or_default());
 
@@ -284,13 +284,15 @@ pub fn ui(
     });
 
     Frame::dark_canvas(ui.style()).show(ui, |ui| {
-        ui.visuals_mut().clip_rect_margin = 0.0;
-
         let available_height = ui.max_rect().bottom() - ui.min_rect().bottom();
         ScrollArea::vertical().show(ui, |ui| {
             let mut canvas = ui.available_rect_before_wrap();
             canvas.max.y = f32::INFINITY;
-            let response = ui.interact(canvas, ui.id().with("canvas"), Sense::click_and_drag());
+            let response = ui.interact(
+                canvas,
+                ui.scope_id().with("canvas"),
+                Sense::click_and_drag(),
+            );
 
             let (min_ns, max_ns) = if options.merge_scopes {
                 frames.merged_range_ns
@@ -390,7 +392,7 @@ fn ui_canvas(
                 pos2(info.canvas.min.x, line_y),
                 pos2(info.canvas.max.x, line_y),
             ],
-            Stroke::new(1.0, Rgba::from_white_alpha(0.5)),
+            Stroke::new(1.0_f32, Rgba::from_white_alpha(0.5)),
         );
 
         cursor_y += info.text_height;
@@ -553,7 +555,10 @@ fn paint_timeline(
 
             shapes.push(egui::Shape::line_segment(
                 [pos2(line_x, canvas.min.y), pos2(line_x, canvas.max.y)],
-                Stroke::new(1.0, Rgba::from_white_alpha(line_alpha * alpha_multiplier)),
+                Stroke::new(
+                    1.0_f32,
+                    Rgba::from_white_alpha(line_alpha * alpha_multiplier),
+                ),
             ));
 
             let text_alpha = if big_line {
@@ -784,7 +789,7 @@ fn paint_scope(
             Tooltip::always_open(
                 info.ctx.clone(),
                 info.layer_id,
-                Id::new("puffin_profiler_tooltip"),
+                Id::unique("puffin_profiler_tooltip"),
                 PopupAnchor::Pointer,
             )
             .show(|ui| {
@@ -850,7 +855,7 @@ fn paint_merge_scope(
             Tooltip::always_open(
                 info.ctx.clone(),
                 info.layer_id,
-                Id::new("puffin_profiler_tooltip"),
+                Id::unique("puffin_profiler_tooltip"),
                 PopupAnchor::Pointer,
             )
             .show(|ui| {
